@@ -1,0 +1,59 @@
+{
+  "name": "aero-overload",
+  "description": "ECMAScript function/method overloading with support of several approaches: decorator, fluent builder, neat factory",
+  "keywords": "ES2015, function overload, decorator, fluent",
+  "license": "MIT",
+  "version": "0.1.0",
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "build"
+  ],
+  "homepage": "https://github.com/vladen/aero-overload",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vladen/aero-overload.git"
+  },
+  "author": "Denis Vlassenko <denis_vlassenko@epam.com>",
+  "scripts": {
+    "all": "npm run lint && npm run build && npm run test && npm run cover && npm run doc",
+    "build": "npm run make:lib && npm run make:spc && npm run minify",
+    "build:lib": "babel aero-overload.js --out-file build/aero-overload.umd.js --plugins babel-plugin-add-module-exports,transform-es2015-modules-umd",
+    "build:spc": "babel aero-overload.specs.js --out-file build/legacy/aero-overload.specs.umd.js --plugins babel-plugin-add-module-exports,transform-es2015-modules-umd",
+    "cover": "rimraf coverage && babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- aero-overload.specs.js --reporter dot",
+    "doc": "npm run doc:library && npm run doc:tests",
+    "doc:lib": "jsdoc2md aero-overload.js > documentation/readme.md --global-index-format dl --member-index-format grouped --module-index-format dl --param-list-format list --property-list-format list --sort-by name",
+    "doc:spc": "mocha aero-overload.specs.js --compilers babel:babel-core/register --reporter markdown --require core-js > specifications/readme.md",
+    "lint": "npm run lint:lib && npm run lint:spc",
+    "lint:lib": "eslint aero-overload.js",
+    "lint:spc": "eslint aero-overload.specs.js",
+    "minify": "uglifyjs build/legacy/aero-overload.js --compress --mangle --output build/legacy/aero-overload.min.js",
+    "test": "mocha aero-overload.test.js --check-leaks --colors --prof --compilers babel:babel-core/register --require core-js"
+  },
+  "pre-commit": {
+    "run": "lint",
+    "silent": true
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-es2015-modules-umd": "^6.18.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-register": "^6.18.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.10.2",
+    "isparta": "^4.0.0",
+    "jsdoc-to-markdown": "^2.0.1",
+    "mocha": "^3.1.2",
+    "pre-commit": "^1.1.3",
+    "rimraf": "^2.5.4",
+    "rollup": "^0.36.3",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0",
+    "uglify-js": "^2.7.4"
+  },
+  "dependencies": {}
+}

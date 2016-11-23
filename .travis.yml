@@ -1,0 +1,17 @@
+cache:
+  directories:
+    - node_modules
+language: node_js
+node_js:
+  - "node"
+script:
+  - npm run test
+  - npm run cover
+after_script:
+  - codeclimate-test-reporter < coverage/lcov.info
+branches:
+  only:
+    - master
+addons:
+  code_climate:
+    repo_token: 

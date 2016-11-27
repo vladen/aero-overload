@@ -1,0 +1,7 @@
+--bail
+--check-leaks
+--colors
+--expose-gc
+--prof
+--compilers js:babel-core/register
+--require core-js

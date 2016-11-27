@@ -4,7 +4,6 @@ ECMAScript function/method overloading with support of several approaches: decor
 __Contents:__
 * [Installation](#installation)
 * [Examples](#examples)
-* [Dependencies](#dependencies)
 * [API documentation](https://github.com/vladen/aero-overload/tree/master/documentation)
 * [Test specifications](https://github.com/vladen/aero-overload/tree/master/specifications)
 * [License](#license)
@@ -115,17 +114,6 @@ test(1, 'abc');     // number, string
 test('abc', 1);     // string, number
 test({});           // fallback
 ```
-
-## Dependencies
-
-Since aerobus heavily uses ES6 features (Maps, Symbols, iterators, arrow functions, rest parameters, etc.), it depends on [core-js](https://github.com/zloirock/core-js) standard library when hosted in legacy environment and relies on [babeljs](babeljs.io) to transpile ES6 code into ES5.
-
-The build folder of this repository contains ready to use both modern (ES6) and legacy (ES5) verions of library and tests.
-
-The source folder of this repository contains original, ES6 version of library and tests.
-
-Npm package description file (package.json) supports both ES6 and ES5 environments trying to load modern version of library first and falling back to legacy version in case of error. 
-For aerobus to work in any legacy environment it's necessary to polyfill global namespace via [core-js](https://github.com/zloirock/core-js) library.
 
 # License
 

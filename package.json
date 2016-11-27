@@ -17,18 +17,17 @@
   "author": "Denis Vlassenko <denis_vlassenko@epam.com>",
   "scripts": {
     "all": "npm run lint && npm run build && npm run test && npm run cover && npm run doc",
-    "build": "npm run make:lib && npm run make:spc && npm run minify",
+    "build": "npm run make:lib && npm run make:test && npm run minify",
     "build:lib": "babel aero-overload.js --out-file build/aero-overload.umd.js --plugins babel-plugin-add-module-exports,transform-es2015-modules-umd",
-    "build:spc": "babel aero-overload.specs.js --out-file build/legacy/aero-overload.specs.umd.js --plugins babel-plugin-add-module-exports,transform-es2015-modules-umd",
-    "cover": "rimraf coverage && babel-node node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- aero-overload.specs.js --reporter dot",
+    "build:test": "babel aero-overload.specs.js --out-file build/legacy/aero-overload.specs.umd.js --plugins babel-plugin-add-module-exports,transform-es2015-modules-umd",
     "doc": "npm run doc:library && npm run doc:tests",
     "doc:lib": "jsdoc2md aero-overload.js > documentation/readme.md --global-index-format dl --member-index-format grouped --module-index-format dl --param-list-format list --property-list-format list --sort-by name",
-    "doc:spc": "mocha aero-overload.specs.js --compilers babel:babel-core/register --reporter markdown --require core-js > specifications/readme.md",
-    "lint": "npm run lint:lib && npm run lint:spc",
+    "doc:test": "mocha aero-overload.specs.js --compilers babel:babel-core/register --reporter markdown --require core-js > specifications/readme.md",
+    "lint": "npm run lint:lib && npm run lint:test",
     "lint:lib": "eslint aero-overload.js",
-    "lint:spc": "eslint aero-overload.specs.js",
+    "lint:test": "eslint test/*.js",
     "minify": "uglifyjs build/legacy/aero-overload.js --compress --mangle --output build/legacy/aero-overload.min.js",
-    "test": "mocha aero-overload.test.js --check-leaks --colors --prof --compilers babel:babel-core/register --require core-js"
+    "test": "rimraf coverage && istanbul cover node_modules/mocha/bin/_mocha"
   },
   "pre-commit": {
     "run": "lint",
@@ -45,12 +44,11 @@
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
     "eslint": "^3.10.2",
-    "isparta": "^4.0.0",
+    "istanbul": "^0.4.5",
     "jsdoc-to-markdown": "^2.0.1",
     "mocha": "^3.1.2",
     "pre-commit": "^1.1.3",
     "rimraf": "^2.5.4",
-    "rollup": "^0.36.3",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
     "uglify-js": "^2.7.4"

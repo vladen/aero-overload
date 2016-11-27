@@ -4,8 +4,11 @@ const $overloaded = Symbol('overloaded');
 
 const aliases = new Map;
 
-const isFunction = value => typeof value === 'function';
+const is = type => value => typeof value === type;
+const isFunction = is('function');
+const isObject = is('object');
 const isOverloaded = value => isFunction(value) && value[$overloaded];
+const isString = is('string');
 
 const matchers = [
   () => () => true,
@@ -32,17 +35,26 @@ matchers.default = (predicates) => function(binding, parameters) {
 };
 
 const validators = {
+  descriptor: (value) => {
+    if (!isObject(value)) fail('descriptor object', value);
+  },
   instance: (value) => {
-    if (!isFunction(value)) fail('overload function', value);
+    if (!isFunction(value)) fail('instance function', value);
+  },
+  key: (value) => {
+    if (!isString(value)) fail('key string', value);
   },
   name: (value) => {
-    if (typeof value !== 'string') fail('name string', value);
+    if (!isString(value)) fail('name string', value);
   },
   predicate: (value) => {
     if (!isFunction(value)) fail('predicate function', value);
   },
   predicates: (value) => {
     if (!Array.isArray(value)) fail('array of predicate functions', value);
+  },
+  target: (value) => {
+    if (!isObject(value)) fail('target object', value);
   }
 }
 
@@ -72,8 +84,8 @@ return function ${name}() {
     `)(context, execute);
 
   function match(predicates, instance) {
-    validators.instance(instance);
     validators.predicates(predicates);
+    validators.instance(instance);
     predicates = predicates.map(predicate => aliases.get(predicate) || predicate);
     predicates.forEach(validators.predicate);
     const arity = predicates.length;
@@ -122,7 +134,13 @@ function fail(type, value) {
 }
 
 function overload(name, ...predicates) {
-  return (target, $, descriptor) => {
+  validators.name(name);
+
+  return (target, key, descriptor) => {
+    validators.target(target);
+    validators.key(key);
+    validators.descriptor(descriptor);
+    validators.instance(descriptor.value);
     let overloaded;
     if (name in target) {
       const declaration = Object.getOwnPropertyDescriptor(target, name);
@@ -130,13 +148,17 @@ function overload(name, ...predicates) {
       if (!isOverloaded(overloaded)) {
         if (!declaration.configurable)
           throw new TypeError('The method being overloaded is not configurable');
-        overloaded = declaration.value = build(name, overloaded);
-        Object.defineProperty(target, name, declaration);
+        if (key === name) descriptor.value = overloaded;
+        else {
+          overloaded = declaration.value = build(name, overloaded);
+          Object.defineProperty(target, name, declaration);          
+        }
       }
     }
     else {
       overloaded = build(name);
-      Object.defineProperty(target, name, { value: overloaded });
+      if (key === name) descriptor.value = overloaded;
+      else Object.defineProperty(target, name, { value: overloaded });
     }
     overloaded.match(predicates, descriptor.value);
     return descriptor;
